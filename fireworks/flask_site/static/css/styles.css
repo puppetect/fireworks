@@ -122,3 +122,7 @@ form.query button[type=submit] {
 hr.myhrline{
  margin:5px;
 }
+
+form.new_wf input {
+  width: 40em
+}

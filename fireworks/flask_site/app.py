@@ -341,6 +341,56 @@ def dashboard():
 
     return render_template("dashboard.html", **locals())
 
+@app.route("/new_wf/")
+@requires_auth
+def new_wf():
+    return render_template("new_wf.html", **locals())
+
+@app.route("/submit_wf/")
+@requires_auth
+def submit_wf():
+    from fireworks import Firework, LaunchPad, ScriptTask, FWorker
+    from fireworks.queue.queue_launcher import rapidfire
+    from fireworks.user_objects.queue_adapters.common_adapter import CommonAdapter
+    from atomate2.vasp.flows.core import RelaxBandStructureMaker
+    from atomate2.vasp.powerups import add_metadata_to_flow
+    from jobflow.managers.fireworks import flow_to_workflow
+    from pymatgen.core import Structure
+
+    # construct a rock salt MgO structure
+    mgo_structure = Structure(
+        lattice=[[0, 2.13, 2.13], [2.13, 0, 2.13], [2.13, 2.13, 0]],
+        species=["Mg", "O"],
+        coords=[[0, 0, 0], [0.5, 0.5, 0.5]],
+    )
+
+    # make a band structure flow to optimise the structure and obtain the band structure
+    bandstructure_flow = RelaxBandStructureMaker().make(mgo_structure)
+
+    # convert the flow to a fireworks WorkFlow object
+    wf = flow_to_workflow(bandstructure_flow)
+
+    # submit the workflow to the FireWorks launchpad
+    lpad = app.lp
+    lpad.add_wf(wf)
+
+    pre_rocket = """
+    export OMP_STACKSIZE=512m
+    ulimit -s unlimited
+    swapoff -a
+    export OMP_NUM_THREADS=1
+    export FW_CONFIG_FILE=/shared/home/admin/software/atomate2/config/FW_config.yaml
+
+    export PATH=/shared/home/admin/software/6.4.1/vasp.6.4.1/bin:$PATH
+    source /shared/home/admin/software/opt/oneapi/setvars.sh intel64
+    eval "$(/shared/home/admin/software/anaconda/3-2023.07/bin/conda shell.bash hook)"
+    """
+
+    adapter = CommonAdapter("SLURM", "fireworks_queue", job_name="bandstructure", nodes=2, cpus_per_task=32, queue="cpu32c1", pre_rocket=pre_rocket, launch_dir=os.getcwd(), rocket_launch="rlaunch rapidfire --nlaunches 0")
+
+    rapidfire(lpad, FWorker(), adapter, nlaunches=1)
+    return render_template("home.html", **locals())
+
 
 def parse_querystr(querystr, coll):
     # try to parse using `json.loads`.

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}New Workflow{% endblock %}
+
+{% block content %}
+<h2>New Workflow</h2>
+<!-- 画一个dropdown单选框，选项为三个: Band Structure、Elastic Tensor、Phonons -->
+<form class="new_wf" method="post" action="{{ url_for('submit_wf') }}">
+    <div class="form-group">
+        <label for="wf_type"><strong>Workflow Type:</strong></label>
+        <select class="form-control" id="wf_type" name="wf_type">
+            <option value="Band Structure">Band Structure</option>
+            <option value="Elastic Tensor">Elastic Tensor</option>
+            <option value="Phonons">Phonons</option>
+        </select>
+        <label for="wf_name"><strong>Workflow Name:</strong></label>
+        <input type="text" class="form-control" id="wf_name" name="wf_name" required>
+
+        <label for="working_dir"><strong>Working Directory: </strong>(Absolute path of current workspace on Queue Cluster)</label>        
+        <input type="text" class="form-control" id="working_dir" name="working_dir" required>
+
+        <label for="structure_file"><strong>Structure File Path:</strong> (If the input file path is a directory, all cif files in the directory will be submitted.)</label>        
+        <input type="text" class="form-control" id="input_file" name="input_file" required>
+
+        <label for="parameter_file"><strong>Parameter File Path:</strong> (Optional)</label>        
+        <input type="text" class="form-control" id="paramter_file" name="paramter_file">
+
+
+
+    <hr/>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+</form>
+{% endblock %}
