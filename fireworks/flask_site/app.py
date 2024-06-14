@@ -351,7 +351,7 @@ def new_wf():
 def submit_wf():
     qlaunch_script = request.form.get('working_dir') + '/calculate.py'
     command = 'su -c "python ' + qlaunch_script + '" official'
-    logger.log('ERROR', command)
+    logger.warn(command)
     os.system(command)
     # from fireworks import Firework, LaunchPad, ScriptTask, FWorker
     # from fireworks.queue.queue_launcher import rapidfire
