@@ -349,53 +349,65 @@ def new_wf():
 @app.route("/submit_wf/", methods=['POST'])
 @requires_auth
 def submit_wf():
-    from fireworks import Firework, LaunchPad, ScriptTask, FWorker
-    from fireworks.queue.queue_launcher import rapidfire
-    from fireworks.user_objects.queue_adapters.common_adapter import CommonAdapter
-    from atomate2.vasp.flows.core import RelaxBandStructureMaker
-    from atomate2.vasp.powerups import add_metadata_to_flow
-    from jobflow.managers.fireworks import flow_to_workflow
-    from pymatgen.core import Structure
+    import subprocess
+    qlaunch_script = request.form.get('working_dir') + '/calculate.py'
+    command = 'su -c "python ' + qlaunch_script + '" official'
+    logger.log('ERROR', command)
+    try:
+        # 使用subprocess模块执行命令
+        result = subprocess.check_output(command, shell=True, stderr=subprocess.STDOUT)
+        return result
+    except subprocess.CalledProcessError as e:
+        # 如果命令执行失败，可以记录错误信息
+        print(f"Command '{command}' failed with return code {e.returncode}")
+        return None
+    # from fireworks import Firework, LaunchPad, ScriptTask, FWorker
+    # from fireworks.queue.queue_launcher import rapidfire
+    # from fireworks.user_objects.queue_adapters.common_adapter import CommonAdapter
+    # from atomate2.vasp.flows.core import RelaxBandStructureMaker
+    # from atomate2.vasp.powerups import add_metadata_to_flow
+    # from jobflow.managers.fireworks import flow_to_workflow
+    # from pymatgen.core import Structure
 
-    wf_name = request.form.get('wf_name')
-    working_dir = request.form.get('working_dir')
-    username = request.form.get('username')
-    structure_file = request.form.get('structure_file')
-    parameter_file = request.form.get('parameter_file')
+    # wf_name = request.form.get('wf_name')
+    # working_dir = request.form.get('working_dir')
+    # username = request.form.get('username')
+    # structure_file = request.form.get('structure_file')
+    # parameter_file = request.form.get('parameter_file')
 
-    # construct a rock salt MgO structure
-    mgo_structure = Structure(
-        lattice=[[0, 2.13, 2.13], [2.13, 0, 2.13], [2.13, 2.13, 0]],
-        species=["Mg", "O"],
-        coords=[[0, 0, 0], [0.5, 0.5, 0.5]],
-    )
+    # # construct a rock salt MgO structure
+    # mgo_structure = Structure(
+    #     lattice=[[0, 2.13, 2.13], [2.13, 0, 2.13], [2.13, 2.13, 0]],
+    #     species=["Mg", "O"],
+    #     coords=[[0, 0, 0], [0.5, 0.5, 0.5]],
+    # )
 
-    # make a band structure flow to optimise the structure and obtain the band structure
-    bandstructure_flow = RelaxBandStructureMaker().make(mgo_structure)
+    # # make a band structure flow to optimise the structure and obtain the band structure
+    # bandstructure_flow = RelaxBandStructureMaker().make(mgo_structure)
 
-    # convert the flow to a fireworks WorkFlow object
-    wf = flow_to_workflow(bandstructure_flow)
+    # # convert the flow to a fireworks WorkFlow object
+    # wf = flow_to_workflow(bandstructure_flow)
 
-    # submit the workflow to the FireWorks launchpad
-    lpad = app.lp
-    lpad.add_wf(wf)
+    # # submit the workflow to the FireWorks launchpad
+    # lpad = app.lp
+    # lpad.add_wf(wf)
 
-    pre_rocket = """
-    export OMP_STACKSIZE=512m
-    ulimit -s unlimited
-    swapoff -a
-    export OMP_NUM_THREADS=1
-    export FW_CONFIG_FILE=/shared/home/admin/software/atomate2/config/FW_config.yaml
+    # pre_rocket = """
+    # export OMP_STACKSIZE=512m
+    # ulimit -s unlimited
+    # swapoff -a
+    # export OMP_NUM_THREADS=1
+    # export FW_CONFIG_FILE=/shared/home/admin/software/atomate2/config/FW_config.yaml
 
-    export PATH=/shared/home/admin/software/6.4.1/vasp.6.4.1/bin:$PATH
-    source /shared/home/admin/software/opt/oneapi/setvars.sh intel64
-    eval "$(/shared/home/admin/software/anaconda/3-2023.07/bin/conda shell.bash hook)"
-    """
+    # export PATH=/shared/home/admin/software/6.4.1/vasp.6.4.1/bin:$PATH
+    # source /shared/home/admin/software/opt/oneapi/setvars.sh intel64
+    # eval "$(/shared/home/admin/software/anaconda/3-2023.07/bin/conda shell.bash hook)"
+    # """
 
-    adapter = CommonAdapter("SLURM", "fireworks_queue", job_name=wf_name, nodes=1, cpus_per_task=32, queue="cpu32c1", uid=username, pre_rocket=pre_rocket, launch_dir=working_dir, rocket_launch="rlaunch rapidfire --nlaunches 0")
+    # adapter = CommonAdapter("SLURM", "fireworks_queue", job_name=wf_name, nodes=1, cpus_per_task=32, queue="cpu32c1", uid=username, pre_rocket=pre_rocket, launch_dir=working_dir, rocket_launch="rlaunch rapidfire --nlaunches 0")
 
-    rapidfire(lpad, FWorker(), adapter, nlaunches=1)
-    return render_template("home.html", **locals())
+    # rapidfire(lpad, FWorker(), adapter, nlaunches=1)
+    return redirect(url_for("home"))
 
 
 def parse_querystr(querystr, coll):
