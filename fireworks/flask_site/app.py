@@ -350,7 +350,7 @@ def new_wf():
 @requires_auth
 def submit_wf():
     qlaunch_script = request.form.get('working_dir') + '/submit.sh'
-    command = 'su -c "python ' + qlaunch_script + '" official'
+    command = 'su -c "' + qlaunch_script + '" official'
     logger.warn(command)
     os.system(command)
     # from fireworks import Firework, LaunchPad, ScriptTask, FWorker
