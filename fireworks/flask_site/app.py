@@ -349,7 +349,7 @@ def new_wf():
 @app.route("/submit_wf/", methods=['POST'])
 @requires_auth
 def submit_wf():
-    qlaunch_script = request.form.get('working_dir') + '/calculate.py'
+    qlaunch_script = request.form.get('working_dir') + '/submit.sh'
     command = 'su -c "python ' + qlaunch_script + '" official'
     logger.warn(command)
     os.system(command)
