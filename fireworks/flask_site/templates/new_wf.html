@@ -11,12 +11,14 @@
             var btn = document.getElementById("submit_btn");
             btn.disabled = true;
         }
+        var form = document.getElementById("new_wf");
+        form.submit();
     }
   </script>
 
 <h2>New Workflow</h2>
 
-<form class="new_wf" method="post" action="{{ url_for('submit_wf') }}">
+<form id="new_wf" class="new_wf" method="post" action="{{ url_for('submit_wf') }}">
     <div class="form-group">
 
         <label for="working_dir"><strong>Working Directory: </strong>(Absolute path of current workspace on Queue Cluster)</label>        

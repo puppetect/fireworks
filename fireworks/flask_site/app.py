@@ -350,9 +350,9 @@ def new_wf():
 @requires_auth
 def submit_wf():
     logger.warn("submittting")
-    working_dir = request.form.get('working_dir').strip().replace(" ", "")
-    structure = request.form.get('structure_file')
-    parameter = request.form.get('parameter_file')
+    working_dir = request.form.get('working_dir', default="").strip().replace(" ", "")
+    structure = request.form.get('structure_file', default="")
+    parameter = request.form.get('parameter_file', default="")
     command = working_dir + '/.submit.sh "' + structure + '" "' + parameter + '"'
     logger.warn(command)
     # command = 'su -c "' + command + '" official'
