@@ -346,7 +346,7 @@ def dashboard():
 def new_wf():
     return render_template("new_wf.html", **locals())
 
-@app.route("/submit_wf/")
+@app.route("/submit_wf/", methods=['POST'])
 @requires_auth
 def submit_wf():
     from fireworks import Firework, LaunchPad, ScriptTask, FWorker
@@ -356,6 +356,12 @@ def submit_wf():
     from atomate2.vasp.powerups import add_metadata_to_flow
     from jobflow.managers.fireworks import flow_to_workflow
     from pymatgen.core import Structure
+
+    wf_name = request.form.get('wf_name')
+    working_dir = request.form.get('working_dir')
+    username = request.form.get('username')
+    structure_file = request.form.get('structure_file')
+    parameter_file = request.form.get('parameter_file')
 
     # construct a rock salt MgO structure
     mgo_structure = Structure(
@@ -386,7 +392,7 @@ def submit_wf():
     eval "$(/shared/home/admin/software/anaconda/3-2023.07/bin/conda shell.bash hook)"
     """
 
-    adapter = CommonAdapter("SLURM", "fireworks_queue", job_name="bandstructure", nodes=2, cpus_per_task=32, queue="cpu32c1", pre_rocket=pre_rocket, launch_dir=os.getcwd(), rocket_launch="rlaunch rapidfire --nlaunches 0")
+    adapter = CommonAdapter("SLURM", "fireworks_queue", job_name=wf_name, nodes=1, cpus_per_task=32, queue="cpu32c1", uid=username, pre_rocket=pre_rocket, launch_dir=working_dir, rocket_launch="rlaunch rapidfire --nlaunches 0")
 
     rapidfire(lpad, FWorker(), adapter, nlaunches=1)
     return render_template("home.html", **locals())

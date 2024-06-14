@@ -17,6 +17,7 @@
 #SBATCH --time-min=$${time_min}
 #SBATCH --partition=$${queue}
 #SBATCH --account=$${account}
+#SBATCH --uid=$${username}
 #SBATCH --job-name=$${job_name}
 #SBATCH --license=$${license}
 #SBATCH --output=$${job_name}-%j.out
