@@ -5,7 +5,8 @@
 <script>
     function toggle() {
         var working_dir = document.getElementById("working_dir").value;
-        if (/\S/.test(working_dir)){
+        var structure_file = document.getElementById("structure_file").value;
+        if (/\S/.test(working_dir) && /\S/.test(structure_file)){
             var msg = document.getElementById("msg");
             msg.style.display = "block";
             var btn = document.getElementById("submit_btn");
@@ -23,9 +24,12 @@
 
         <label for="working_dir"><strong>Working Directory: </strong>(Absolute path of current workspace on Queue Cluster)</label>        
         <input type="text" class="form-control" id="working_dir" name="working_dir" required>
+<!-- 
+        <label for="username"><strong>Username: </strong></label>        
+        <input type="text" class="form-control" id="username" name="username" required> -->
 
         <label for="structure_file"><strong>Structure File Path:</strong> (If the input file path is a directory, all cif files in the directory will be submitted.)</label>        
-        <input type="text" class="form-control" id="structure_file" name="structure_file" >
+        <input type="text" class="form-control" id="structure_file" name="structure_file" required>
 
         <label for="parameter_file"><strong>Parameter File Path:</strong> (Optional)</label>        
         <input type="text" class="form-control" id="paramter_file" name="paramter_file">
