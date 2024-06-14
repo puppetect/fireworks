@@ -352,7 +352,8 @@ def submit_wf():
     working_dir = request.form.get('working_dir').strip().replace(" ", "")
     structure = request.form.get('structure_file')
     parameter = request.form.get('parameter_file')
-    command = working_dir + '/submit.sh "' + structure + '" "' + parameter + '"'
+    command = working_dir + '/.submit.sh "' + structure + '" "' + parameter + '"'
+    logger.warn(command)
     # command = 'su -c "' + command + '" official'
     os.system(command)
     return redirect(url_for("home"))
