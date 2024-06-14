@@ -57,5 +57,6 @@ FW.json
 .DS_Store
 
 .venv/*
+workflow/*
 
 main.py

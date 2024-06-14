@@ -126,3 +126,11 @@ hr.myhrline{
 form.new_wf input {
   width: 40em
 }
+
+button.submission {
+  width: 20em
+}
+
+p.msg {
+  font-size: 14px
+}

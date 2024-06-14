@@ -2,8 +2,20 @@
 {% block title %}New Workflow{% endblock %}
 
 {% block content %}
+<script>
+    function toggle() {
+        var working_dir = document.getElementById("working_dir").value;
+        if (/\S/.test(working_dir)){
+            var msg = document.getElementById("msg");
+            msg.style.display = "block";
+            var btn = document.getElementById("submit_btn");
+            btn.disabled = true;
+        }
+    }
+  </script>
+
 <h2>New Workflow</h2>
-<!-- 画一个dropdown单选框，选项为三个: Band Structure、Elastic Tensor、Phonons -->
+
 <form class="new_wf" method="post" action="{{ url_for('submit_wf') }}">
     <div class="form-group">
         <label for="wf_type"><strong>Workflow Type:</strong></label>
@@ -12,14 +24,9 @@
             <option value="Elastic Tensor">Elastic Tensor</option>
             <option value="Phonons">Phonons</option>
         </select>
-        <label for="wf_name"><strong>Workflow Name:</strong></label>
-        <input type="text" class="form-control" id="wf_name" name="wf_name" >
 
         <label for="working_dir"><strong>Working Directory: </strong>(Absolute path of current workspace on Queue Cluster)</label>        
         <input type="text" class="form-control" id="working_dir" name="working_dir" required>
-
-        <label for="username"><strong>Username: </strong></label>        
-        <input type="text" class="form-control" id="username" name="username" >
 
         <label for="structure_file"><strong>Structure File Path:</strong> (If the input file path is a directory, all cif files in the directory will be submitted.)</label>        
         <input type="text" class="form-control" id="structure_file" name="structure_file" >
@@ -27,10 +34,8 @@
         <label for="parameter_file"><strong>Parameter File Path:</strong> (Optional)</label>        
         <input type="text" class="form-control" id="paramter_file" name="paramter_file">
 
-
-
     <hr/>
-        <button type="submit" class="btn btn-primary">Submit</button>
-    </div>
+        <button id="submit_btn" type="submit" class="btn btn-primary submission" onclick="toggle()">Submit</button>
+        <p class="msg" id="msg" style="display:none;">Submitting...Please hold on.</p>
 </form>
 {% endblock %}
