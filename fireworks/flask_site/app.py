@@ -349,12 +349,11 @@ def new_wf():
 @app.route("/submit_wf/", methods=['POST'])
 @requires_auth
 def submit_wf():
-    logger.warn("submittting")
     working_dir = request.form.get('working_dir', default="").strip().replace(" ", "")
     structure = request.form.get('structure_file', default="")
     parameter = request.form.get('parameter_file', default="")
     submit_script = working_dir + '/.submit.sh '
-    command = "su `ls -l " + submit_script + " | awk '{print $3}'` -c '" + " ".join(submit_script, structure, parameter) + "'"
+    command = "su `ls -l " + submit_script + " | awk '{print $3}'` -c '" + " ".join([submit_script, structure, parameter]) + "'"
     logger.warn(command)
     # command = 'su -c "' + command + '" official'
     os.system(command)
