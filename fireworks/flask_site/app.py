@@ -353,7 +353,8 @@ def submit_wf():
     working_dir = request.form.get('working_dir', default="").strip().replace(" ", "")
     structure = request.form.get('structure_file', default="")
     parameter = request.form.get('parameter_file', default="")
-    command = working_dir + '/.submit.sh ' + structure + ' ' + parameter
+    submit_script = working_dir + '/.submit.sh '
+    command = "su `ls -l " + submit_script + " | awk '{print $3}'` -c '" + " ".join(submit_script, structure, parameter) + "'"
     logger.warn(command)
     # command = 'su -c "' + command + '" official'
     os.system(command)
