@@ -352,15 +352,12 @@ def submit_wf():
     import subprocess
     qlaunch_script = request.form.get('working_dir') + '/calculate.py'
     command = 'su -c "python ' + qlaunch_script + '" official'
-    logger.log('ERROR', command)
     try:
         # 使用subprocess模块执行命令
         result = subprocess.check_output(command, shell=True, stderr=subprocess.STDOUT)
-        return result
     except subprocess.CalledProcessError as e:
         # 如果命令执行失败，可以记录错误信息
         print(f"Command '{command}' failed with return code {e.returncode}")
-        return None
     # from fireworks import Firework, LaunchPad, ScriptTask, FWorker
     # from fireworks.queue.queue_launcher import rapidfire
     # from fireworks.user_objects.queue_adapters.common_adapter import CommonAdapter
