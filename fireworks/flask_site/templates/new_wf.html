@@ -23,7 +23,7 @@
     <div class="form-group">
 
         <label for="working_dir"><strong>Working Directory: </strong>(Absolute path of current workspace on Queue Cluster)</label>        
-        <input type="text" class="form-control" id="working_dir" name="working_dir" required>
+        <input type="text" class="form-control" id="working_dir" name="working_dir" placeholder="/shared/ws/1000000000/${工作空间名称}" required>
 
         <label for="structure_file"><strong>Structure File Path:</strong> (If the input file path is a directory, all cif files in the directory will be submitted.)</label>        
         <input type="text" class="form-control" id="structure_file" name="structure_file" required>
@@ -36,6 +36,6 @@
 
     <hr/>
         <button id="submit_btn" type="submit" class="btn btn-primary submission" onclick="toggle()">Submit</button>
-        <p class="msg" id="msg" style="display:none;">Submitting...Please hold on.</p>
+        <p class="msg" id="msg" style="display:none;">Submitting...please hold on and you will be redirected to homepage later. </p>
 </form>
 {% endblock %}
