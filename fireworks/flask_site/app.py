@@ -1,6 +1,7 @@
 import json
 import os
 from functools import wraps
+import time
 
 from flask import Flask, Response, abort, flash, make_response, redirect, render_template, request, session, url_for
 from flask_paginate import Pagination
@@ -26,7 +27,10 @@ logger = get_fw_logger("app")
 
 PER_PAGE = 20
 STATES = sorted(Firework.STATE_RANKS, key=Firework.STATE_RANKS.get)
-
+EXPORTS = """
+export FW_CONFIG_FILE=/shared/home/admin/software/atomate2/config/FW_config.yaml
+eval "$(/shared/home/admin/software/anaconda/3-2023.07/bin/conda shell.bash hook)"
+"""
 
 def check_auth(username, password):
     """
@@ -352,13 +356,76 @@ def submit_wf():
     working_dir = request.form.get('working_dir', default="").strip().replace(" ", "")
     structure = request.form.get('structure_file', default="")
     parameter = request.form.get('parameter_file', default="")
-    submit_script = working_dir + '/.submit.sh '
-    command = "su `ls -l " + submit_script + " | awk '{print $3}'` -c '" + " ".join([submit_script, structure, parameter]) + "'"
-    logger.warn(command)
-    # command = 'su -c "' + command + '" official'
-    os.system(command)
+    username = request.form.get('username', default="")
+    submit_script = working_dir + '/.entrypoint '
+    target_user = username if username != "" else "`ls -l " + submit_script + " | awk '{print $3}'`"
+    command = "su " + target_user + " -c '" + " ".join([submit_script, structure, parameter]) + "'"
+    try:
+        os.system(command)
+    except:
+        logger.error(f"Failed to submit workflow with command: {command}")
     return redirect(url_for("home"))
 
+@app.route("/wf/pause/<id>", methods=['POST'])
+@requires_auth
+def pause_wf(id):
+    try:
+        wf_id = int(id)
+        command = EXPORTS + "lpad pause_wflows -i" + id
+        logger.info(f"Pausing workflow with command: {command}")
+        os.system(command)
+    except ValueError:
+        raise ValueError(f"Invalid wf_id: {id}")
+    return redirect(url_for("wf_details", wf_id=wf_id))
+
+@app.route("/wf/defuse/<id>", methods=['POST'])
+@requires_auth
+def defuse_wf(id):
+    try:
+        wf_id = int(id)
+        command = EXPORTS + "lpad defuse_wflows -i" + id
+        logger.info(f"Pausing workflow with command: {command}")
+        os.system(command)
+    except ValueError:
+        raise ValueError(f"Invalid wf_id: {id}")
+    return redirect(url_for("wf_details", wf_id=wf_id))
+
+
+@app.route("/wf/reignite/<id>/", methods=['POST'])
+@requires_auth
+def reignite_wf(id):
+    try:
+        wf_id = int(id)
+        command = EXPORTS + "lpad reignite_wflows -i" + id
+        logger.info(f"Pausing workflow with command: {command}")
+        os.system(command)
+    except ValueError:
+        raise ValueError(f"Invalid wf_id: {id}")
+    return redirect(url_for("wf_details", wf_id=wf_id))
+
+@app.route("/wf/archive/<id>/", methods=['POST'])
+@requires_auth
+def archive_wf(id):
+    try:
+        wf_id = int(id)
+        command = EXPORTS + "lpad archive_wflows -i" + id
+        logger.info(f"Pausing workflow with command: {command}")
+        os.system(command)
+    except ValueError:
+        raise ValueError(f"Invalid wf_id: {id}")
+    return redirect(url_for("wf_details", wf_id=wf_id))
+
+@app.route("/wf/delete/<id>/", methods=['POST'])
+@requires_auth
+def delete_wf(id):
+    try:
+        wf_id = int(id)
+        command = EXPORTS + "lpad delete_wflows -i" + id
+        logger.info(f"Pausing workflow with command: {command}")
+        os.system(command)
+    except ValueError:
+        raise ValueError(f"Invalid wf_id: {id}")
+    return redirect(url_for("wf_details", wf_id=wf_id))
 
 def parse_querystr(querystr, coll):
     # try to parse using `json.loads`.

@@ -134,3 +134,7 @@ button.submission {
 p.msg {
   font-size: 14px
 }
+
+form.wf_action {
+  display:inline;
+}

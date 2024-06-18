@@ -66,14 +66,50 @@ $('#json').JSONView('toggle', 1);
 $('#toggle-level2-btn').on('click', function() {
 $('#json').JSONView('toggle', 2);
 });
+
 });
+
 </script>
 {% endblock %}
 
 {% block content %}
+<script>
+
+function pause_workflow() {
+    disable_btn();
+    var from = document.getElementById("form_pause");
+    from.submit();
+}
+function defuse_workflow() {
+    disable_btn();
+    var from = document.getElementById("form_defuse");
+    from.submit();
+}
+function reignite_workflow() {
+    disable_btn();
+    var from = document.getElementById("form_reignite");
+    from.submit();
+}
+function archive_workflow() {
+    disable_btn();
+    var from = document.getElementById("form_archive");
+    from.submit();
+}
+function delete_workflow() {
+    disable_btn();
+    var from = document.getElementById("form_delete");
+    from.submit();
+}
+function disable_btn(){
+    var wf_btn = document.getElementsByClassName("wf_btn");
+    for (var i = 0; i < wf_btn.length; i++) {
+        wf_btn[i].disabled = true;
+    }
+}
+</script>
 <h4 class="text-center">Workflow {{ wf_id }} </h4>
 <!-- FILTERS / NAVIGATION -->
-<div class="pull-down">
+<div class="pull-down" style="float: left;">
     <ul class="inline">
         {% for s in all_states %}
         <li>
@@ -86,7 +122,24 @@ $('#json').JSONView('toggle', 2);
         {% endfor %}
     </ul>
 </div>
-<div id="cy"></div>
+<div style="float: right;">
+    <form class="wf_action" id="form_pause" action="/wf/pause/{{wf_id}}" method="post">
+        <button class="wf_btn" id="btn_pause" onclick="pause_workflow()">Pause</button>
+    </form>
+    <form class="wf_action" id="form_defuse" action="/wf/defuse/{{wf_id}}" method="post">
+        <button class="wf_btn" id="btn_defuse" onclick="defuse_workflow()">Defuse</button>
+    </form>
+    <form class="wf_action" id="form_reignite" action="/wf/reignite/{{wf_id}}" method="post">
+        <button class="wf_btn" id="btn_reignite" onclick="reignite_workflow()">Reignite</button>
+    </form>
+    <form class="wf_action" id="form_archive" action="/wf/archive/{{wf_id}}" method="post">
+        <button class="wf_btn" id="btn_archive" onclick="archive_workflow()">Archive</button>
+    </form>
+    <form class="wf_action" id="form_delete" action="/wf/delete/{{wf_id}}" method="post">
+        <button class="wf_btn" id="btn_delete" onclick="delete_workflow()">Delete</button>
+    </form>
+</div>
+<div id="cy" style="display: inline-block;"></div>
 <div id="job-details-target"></div>
 
 <button id="collapse-btn">Collapse</button>
