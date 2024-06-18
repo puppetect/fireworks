@@ -359,9 +359,11 @@ def submit_wf():
     username = request.form.get('username', default="")
     submit_script = working_dir + '/.entrypoint '
     target_user = username if username != "" else "`ls -l " + submit_script + " | awk '{print $3}'`"
-    command = "su " + target_user + " -c '" + " ".join([submit_script, structure, parameter]) + "'"
+    command = "su " + target_user + " -c '" + " ".join([submit_script, structure, parameter]) + "' &"
     try:
         os.system(command)
+        logger.info(f"Submitted workflow with command: {command}")
+        time.sleep(1)
     except:
         logger.error(f"Failed to submit workflow with command: {command}")
     return redirect(url_for("home"))
