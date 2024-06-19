@@ -363,7 +363,7 @@ def submit_wf():
     try:
         os.system(command)
         logger.info(f"Submitted workflow with command: {command}")
-        time.sleep(3.5)
+        time.sleep(8)
     except:
         logger.error(f"Failed to submit workflow with command: {command}")
     return redirect(url_for("home"))
