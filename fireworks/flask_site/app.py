@@ -357,7 +357,7 @@ def submit_wf():
     structure = request.form.get('structure_file', default="")
     parameter = request.form.get('parameter_file', default="")
     username = request.form.get('username', default="")
-    submit_script = working_dir + '/.entrypoint '
+    submit_script = '/shared/ws/1000000000/' + working_dir + '/.entrypoint '
     target_user = username if username != "" else "`ls -l " + submit_script + " | awk '{print $3}'`"
     command = "su " + target_user + " -c '" + " ".join([submit_script, structure, parameter]) + "' &"
     try:
